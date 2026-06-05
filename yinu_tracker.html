@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yinú · Tracker Reclutamiento</title>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@700;800;900&family=Nunito+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a18;
+    --muted: #6b6760;
+    --faint: #9a9488;
+    --border: #e8e3dc;
+    --bg: #faf9f7;
+    --white: #ffffff;
+    --green: #4cba9e;
+    --green-light: #e8f4f1;
+    --red: #d07e87;
+    --red-light: #ffebee;
+    --yellow: #decc54;
+    --yellow-light: #fff8e1;
+    --blue: #1a73e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .header-left .eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 0.3rem;
+  }
+  .header-left h1 {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .header-left h1 span { color: var(--green); }
+
+  /* AUTH SECTION */
+  #auth-section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #auth-section h2 {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    margin-bottom: 0.5rem;
+  }
+  #auth-section p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s ease;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--white);
+  }
+  .btn-primary:hover { background: #333330; transform: translateY(-1px); }
+  .btn-google {
+    background: var(--white);
+    color: var(--ink);
+    border: 1.5px solid var(--border);
+    font-size: 14px;
+    padding: 12px 24px;
+  }
+  .btn-google:hover { border-color: var(--green); background: var(--green-light); }
+  .btn-green { background: var(--green); color: white; }
+  .btn-green:hover { background: #3aaa8e; transform: translateY(-1px); }
+  .btn-sm {
+    padding: 6px 14px;
+    font-size: 12px;
+    border-radius: 8px;
+  }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--bg); color: var(--ink); }
+
+  /* STATUS BAR */
+  #status-bar {
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--green-light);
+    border: 1px solid #b2dfd5;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 13px;
+    color: #1a6b58;
+    font-weight: 600;
+  }
+  #status-bar .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  /* MAIN APP */
+  #main-app { display: none; }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+  }
+  .stat-num {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 900;
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label { font-size: 12px; color: var(--faint); }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .table-header h2 {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    background: var(--ink);
+    color: var(--white);
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #faf9f7; }
+  tr:hover td { background: var(--green-light); transition: background 0.1s; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .badge-green { background: var(--green-light); color: #1a6b58; }
+  .badge-red { background: var(--red-light); color: #8b2a35; }
+  .badge-yellow { background: var(--yellow-light); color: #7a6a10; }
+  .badge-gray { background: #f0ede8; color: var(--faint); }
+  .badge-star { background: #fff3cd; color: #856404; }
+
+  .link-doc {
+    color: var(--blue);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .link-doc:hover { text-decoration: underline; }
+
+  /* ADD FORM */
+  .add-section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .add-section h2 {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .form-grid-wide {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  input, select, textarea {
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--green);
+    background: var(--white);
+  }
+  textarea { resize: vertical; min-height: 60px; }
+
+  /* TOAST */
+  #toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--ink);
+    color: var(--white);
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 999;
+  }
+  #toast.show { opacity: 1; transform: translateY(0); }
+  #toast.success { background: var(--green); }
+  #toast.error { background: var(--red); }
+
+  /* LOADING */
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--faint);
+    font-size: 14px;
+  }
+
+  @media (max-width: 700px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .form-grid, .form-grid-wide { grid-template-columns: 1fr; }
+    body { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="eyebrow">Recursos Humanos · Ciclo 2026–2027</div>
+    <h1>Tracker <span>Yinú</span></h1>
+  </div>
+  <div id="header-actions"></div>
+</div>
+
+<!-- AUTH -->
+<div id="auth-section">
+  <h2>Conectar con Google Sheets</h2>
+  <p>Esta app escribe directamente en tu tracker de reclutamiento. Autoriza el acceso a Google Drive una sola vez.</p>
+  <button class="btn btn-google" onclick="startAuth()">
+    <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
+    Autorizar con Google
+  </button>
+  <p style="margin-top:1rem; font-size:11px; color:var(--faint);">Solo requiere acceso a Google Sheets y Drive.</p>
+</div>
+
+<!-- STATUS BAR -->
+<div id="status-bar">
+  <div class="dot"></div>
+  <span id="status-text">Conectado a Google Sheets</span>
+  <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="signOut()">Desconectar</button>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app">
+
+  <!-- STATS -->
+  <div class="stats-row" id="stats-row">
+    <div class="stat-card">
+      <div class="stat-num" id="stat-total" style="color:var(--ink)">—</div>
+      <div class="stat-label">Candidatas totales</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-avanzan" style="color:var(--green)">—</div>
+      <div class="stat-label">Avanzan / activas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-descartadas" style="color:var(--red)">—</div>
+      <div class="stat-label">Descartadas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-entrevista" style="color:var(--yellow)">—</div>
+      <div class="stat-label">En entrevista</div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <div class="table-header">
+      <h2>Candidatas · Ciclo 2026–2027</h2>
+      <button class="btn btn-primary btn-sm" onclick="loadSheet()">↻ Actualizar</button>
+    </div>
+    <div id="table-container">
+      <div class="empty-state">Cargando datos…</div>
+    </div>
+  </div>
+
+  <!-- ADD ROW FORM -->
+  <div class="add-section">
+    <h2>+ Agregar candidata</h2>
+    <div class="form-grid">
+      <div class="field">
+        <label>#</label>
+        <input type="text" id="f-num" placeholder="13">
+      </div>
+      <div class="field">
+        <label>Nombre completo</label>
+        <input type="text" id="f-nombre" placeholder="Nombre Apellido">
+      </div>
+      <div class="field">
+        <label>Inglés</label>
+        <select id="f-ingles">
+          <option value="">— seleccionar —</option>
+          <option value="✓ Bilingüe nativa">✓ Bilingüe nativa</option>
+          <option value="✓ Avanzado">✓ Avanzado</option>
+          <option value="✓ C1">✓ C1</option>
+          <option value="⚠ B2 sin certificar">⚠ B2 sin certificar</option>
+          <option value="⚠ Avanzado sin certificar">⚠ Avanzado sin certificar</option>
+          <option value="⚠ Zona gris">⚠ Zona gris</option>
+          <option value="✗ Básico">✗ Básico</option>
+          <option value="✗ Sin acreditar">✗ Sin acreditar</option>
+          <option value="✗ No menciona">✗ No menciona</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Experiencia con niños</label>
+        <select id="f-exp">
+          <option value="">— seleccionar —</option>
+          <option value="✓ +2 años">✓ +2 años</option>
+          <option value="✓ 3+ años">✓ 3+ años</option>
+          <option value="✓ 9 años">✓ 9 años</option>
+          <option value="✓ 10 años">✓ 10 años</option>
+          <option value="✓ 20+ años">✓ 20+ años</option>
+          <option value="⚠ Zona gris">⚠ Zona gris</option>
+          <option value="⚠ Mínima">⚠ Mínima</option>
+          <option value="✗ Ninguna">✗ Ninguna</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Montessori</label>
+        <select id="f-mont">
+          <option value="">— seleccionar —</option>
+          <option value="✓ Certificada AMS">✓ Certificada AMS</option>
+          <option value="✓ Certificada SWIMS">✓ Certificada SWIMS</option>
+          <option value="✓ Montessori GA">✓ Montessori GA</option>
+          <option value="⚠ Waldorf (no Montessori)">⚠ Waldorf</option>
+          <option value="— No">— No</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Etapa actual</label>
+        <select id="f-etapa">
+          <option value="Revisión CV">Revisión CV</option>
+          <option value="Pre-entrevista">Pre-entrevista</option>
+          <option value="Entrevista presencial">Entrevista presencial</option>
+          <option value="Comité">Comité</option>
+          <option value="Contratada">Contratada</option>
+          <option value="Descartada">Descartada</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Decisión</label>
+        <select id="f-decision">
+          <option value="Avanza">Avanza</option>
+          <option value="⭐ Prioritaria">⭐ Prioritaria</option>
+          <option value="Avanza con reservas">Avanza con reservas</option>
+          <option value="Pre-entrevista breve">Pre-entrevista breve</option>
+          <option value="Avanza — explorar fit">Avanza — explorar fit</option>
+          <option value="DESCARTADA">DESCARTADA</option>
+          <option value="Contratada">Contratada</option>
+          <option value="En revisión">En revisión</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Doc individual (URL)</label>
+        <input type="text" id="f-doc" placeholder="https://docs.google.com/...">
+      </div>
+      <div class="field">
+        <label>Fecha</label>
+        <input type="text" id="f-fecha" placeholder="05/06/2026">
+      </div>
+    </div>
+    <div class="form-grid-wide">
+      <div class="field">
+        <label>Señal clave</label>
+        <textarea id="f-senal" placeholder="Señal más importante del CV…"></textarea>
+      </div>
+      <div class="field">
+        <label>Notas del proceso</label>
+        <textarea id="f-notas" placeholder="Contexto para el equipo…"></textarea>
+      </div>
+    </div>
+    <div style="display:flex; gap:0.75rem; justify-content:flex-end;">
+      <button class="btn btn-ghost btn-sm" onclick="clearForm()">Limpiar</button>
+      <button class="btn btn-green" onclick="addRow()" id="add-btn">
+        Agregar al tracker
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────
+const SHEET_ID = '1Tg9M--6zADgJx2rWsEwF9gApdGf-7kUvfFoQ8zuFz-E';
+const SHEET_NAME = 'Tracker Reclutamiento · Asistente Montessori 2026–2027';
+const CLIENT_ID = '606344821640-336ench6gh76i1hqf8d2fuana89h78gu.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+const DISCOVERY_DOCS = ['https://sheets.googleapis.com/$discovery/rest?version=v4'];
+
+let tokenClient;
+let gapiInited = false;
+let gisInited = false;
+let accessToken = null;
+
+// ─── GOOGLE API INIT ──────────────────────────────────────────
+function gapiLoaded() {
+  gapi.load('client', initializeGapiClient);
+}
+
+async function initializeGapiClient() {
+  await gapi.client.init({
+    apiKey: '',
+    discoveryDocs: DISCOVERY_DOCS,
+  });
+  gapiInited = true;
+  maybeEnableButton();
+}
+
+function gisLoaded() {
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: async (resp) => {
+      if (resp.error) { showToast('Error de autorización: ' + resp.error, 'error'); return; }
+      accessToken = resp.access_token;
+      gapi.client.setToken({ access_token: accessToken });
+      onAuthorized();
+    },
+  });
+  gisInited = true;
+  maybeEnableButton();
+}
+
+function maybeEnableButton() {
+  // both loaded
+}
+
+function startAuth() {
+  // Check if gapi/gis loaded
+  if (!gapiInited || !gisInited) {
+    // Load them dynamically
+    showToast('Cargando APIs de Google…');
+    loadGoogleAPIs().then(() => {
+      tokenClient.requestAccessToken({ prompt: 'consent' });
+    }).catch(() => {
+      showToast('No se pudieron cargar las APIs. Verifica tu conexión.', 'error');
+    });
+    return;
+  }
+  tokenClient.requestAccessToken({ prompt: '' });
+}
+
+function loadGoogleAPIs() {
+  return new Promise((resolve, reject) => {
+    // Load gapi
+    const gapiScript = document.createElement('script');
+    gapiScript.src = 'https://apis.google.com/js/api.js';
+    gapiScript.onload = () => {
+      gapi.load('client', async () => {
+        await gapi.client.init({ discoveryDocs: DISCOVERY_DOCS });
+        gapiInited = true;
+        checkBothLoaded();
+      });
+    };
+    gapiScript.onerror = reject;
+    document.head.appendChild(gapiScript);
+
+    // Load gis
+    const gisScript = document.createElement('script');
+    gisScript.src = 'https://accounts.google.com/gsi/client';
+    gisScript.onload = () => {
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: async (resp) => {
+          if (resp.error) { showToast('Error: ' + resp.error, 'error'); return; }
+          accessToken = resp.access_token;
+          gapi.client.setToken({ access_token: accessToken });
+          onAuthorized();
+        },
+      });
+      gisInited = true;
+      checkBothLoaded();
+    };
+    gisScript.onerror = reject;
+    document.head.appendChild(gisScript);
+
+    function checkBothLoaded() {
+      if (gapiInited && gisInited) resolve();
+    }
+  });
+}
+
+function onAuthorized() {
+  document.getElementById('auth-section').style.display = 'none';
+  document.getElementById('status-bar').style.display = 'flex';
+  document.getElementById('main-app').style.display = 'block';
+  document.getElementById('status-text').textContent = 'Conectado · ' + SHEET_NAME;
+  setTodayDate();
+  loadSheet();
+}
+
+function signOut() {
+  google.accounts.oauth2.revoke(accessToken, () => {
+    accessToken = null;
+    gapi.client.setToken(null);
+    document.getElementById('auth-section').style.display = 'block';
+    document.getElementById('status-bar').style.display = 'none';
+    document.getElementById('main-app').style.display = 'none';
+  });
+}
+
+// ─── LOAD SHEET DATA ──────────────────────────────────────────
+async function loadSheet() {
+  try {
+    const resp = await gapi.client.sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: 'A:K',
+    });
+    const rows = resp.result.values || [];
+    renderTable(rows);
+    updateStats(rows);
+  } catch(e) {
+    console.error(e);
+    showToast('Error al leer el Sheets: ' + (e.result?.error?.message || e.message), 'error');
+  }
+}
+
+function renderTable(rows) {
+  if (rows.length < 2) {
+    document.getElementById('table-container').innerHTML = '<div class="empty-state">No hay datos en el tracker.</div>';
+    return;
+  }
+  const headers = rows[0];
+  const data = rows.slice(1);
+
+  let html = '<table><thead><tr>';
+  headers.forEach(h => html += `<th>${h}</th>`);
+  html += '</tr></thead><tbody>';
+
+  data.forEach((row, i) => {
+    html += '<tr>';
+    row.forEach((cell, j) => {
+      if (j === 9 && cell && cell.startsWith('http')) {
+        html += `<td><a class="link-doc" href="${cell}" target="_blank">Abrir →</a></td>`;
+      } else if (j === 6) {
+        html += `<td>${renderDecisionBadge(cell)}</td>`;
+      } else if (j === 2 || j === 3 || j === 4) {
+        html += `<td>${renderSignalBadge(cell)}</td>`;
+      } else {
+        html += `<td>${cell || '—'}</td>`;
+      }
+    });
+    // Pad missing cells
+    for (let k = row.length; k < headers.length; k++) html += '<td>—</td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('table-container').innerHTML = html;
+}
+
+function renderDecisionBadge(val) {
+  if (!val) return '—';
+  if (val.includes('DESCARTADA')) return `<span class="badge badge-red">${val}</span>`;
+  if (val.includes('⭐')) return `<span class="badge badge-star">${val}</span>`;
+  if (val.includes('Avanza') || val.includes('Prioritaria')) return `<span class="badge badge-green">${val}</span>`;
+  if (val.includes('reservas') || val.includes('breve') || val.includes('fit')) return `<span class="badge badge-yellow">${val}</span>`;
+  if (val.includes('Contratada')) return `<span class="badge badge-green" style="background:#e8f5e9;color:#2e7d32">${val}</span>`;
+  return `<span class="badge badge-gray">${val}</span>`;
+}
+
+function renderSignalBadge(val) {
+  if (!val) return '—';
+  if (val.startsWith('✓')) return `<span class="badge badge-green">${val}</span>`;
+  if (val.startsWith('⚠')) return `<span class="badge badge-yellow">${val}</span>`;
+  if (val.startsWith('✗')) return `<span class="badge badge-red">${val}</span>`;
+  return val;
+}
+
+function updateStats(rows) {
+  const data = rows.slice(1);
+  const total = data.length;
+  const descartadas = data.filter(r => (r[6]||'').includes('DESCARTADA')).length;
+  const entrevista = data.filter(r => (r[5]||'').includes('Entrevista')).length;
+  const avanzan = total - descartadas;
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-avanzan').textContent = avanzan;
+  document.getElementById('stat-descartadas').textContent = descartadas;
+  document.getElementById('stat-entrevista').textContent = entrevista;
+}
+
+// ─── ADD ROW ──────────────────────────────────────────────────
+async function addRow() {
+  const btn = document.getElementById('add-btn');
+  const nombre = document.getElementById('f-nombre').value.trim();
+  if (!nombre) { showToast('El nombre es obligatorio', 'error'); return; }
+
+  const row = [
+    document.getElementById('f-num').value.trim(),
+    nombre,
+    document.getElementById('f-ingles').value,
+    document.getElementById('f-exp').value,
+    document.getElementById('f-mont').value,
+    document.getElementById('f-etapa').value,
+    document.getElementById('f-decision').value,
+    document.getElementById('f-senal').value.trim(),
+    document.getElementById('f-notas').value.trim(),
+    document.getElementById('f-doc').value.trim(),
+    document.getElementById('f-fecha').value.trim(),
+  ];
+
+  btn.innerHTML = '<span class="spinner"></span> Guardando…';
+  btn.disabled = true;
+
+  try {
+    await gapi.client.sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      range: 'A:K',
+      valueInputOption: 'USER_ENTERED',
+      resource: { values: [row] },
+    });
+    showToast('✓ ' + nombre + ' agregada al tracker', 'success');
+    clearForm();
+    loadSheet();
+  } catch(e) {
+    showToast('Error al guardar: ' + (e.result?.error?.message || e.message), 'error');
+  } finally {
+    btn.innerHTML = 'Agregar al tracker';
+    btn.disabled = false;
+  }
+}
+
+// ─── UTILS ────────────────────────────────────────────────────
+function clearForm() {
+  ['f-num','f-nombre','f-ingles','f-exp','f-mont','f-decision','f-senal','f-notas','f-doc'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  setTodayDate();
+}
+
+function setTodayDate() {
+  const now = new Date();
+  const d = String(now.getDate()).padStart(2,'0');
+  const m = String(now.getMonth()+1).padStart(2,'0');
+  const y = now.getFullYear();
+  const el = document.getElementById('f-fecha');
+  if (el) el.value = `${d}/${m}/${y}`;
+}
+
+let toastTimer;
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; }, 3500);
+}
+
+// ─── OAUTH NOTICE ────────────────────────────────────────────
+// This app requires a Google OAuth Client ID to function.
+// To set it up:
+// 1. Go to console.cloud.google.com
+// 2. Create a project → Enable Sheets API
+// 3. Create OAuth 2.0 credentials (Web application)
+// 4. Add this page's origin to authorized origins
+// 5. Copy the Client ID and replace '' above
+
+// If running from claude.ai artifacts, the origin will be
+// the artifact's iframe origin — add it to allowed origins.
+
+window.onload = () => {
+  setTodayDate();
+
+  // Show config notice if no client ID
+  if (!CLIENT_ID) {
+    const authSection = document.getElementById('auth-section');
+    authSection.innerHTML = `
+      <h2>Un paso antes de conectar</h2>
+      <p>Esta app necesita un <strong>Google OAuth Client ID</strong> para escribir en tu Sheets. Es un proceso de ~5 minutos que solo haces una vez.</p>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:left;margin-bottom:1rem;font-size:12px;line-height:1.8;color:var(--muted)">
+        <strong style="color:var(--ink)">Pasos:</strong><br>
+        1. Ve a <a href="https://console.cloud.google.com" target="_blank" style="color:var(--blue)">console.cloud.google.com</a><br>
+        2. Crea un proyecto → Habilita <strong>Google Sheets API</strong><br>
+        3. Credenciales → Crear → <strong>ID de cliente OAuth 2.0</strong> (tipo: Aplicación web)<br>
+        4. En "Orígenes autorizados" agrega el origen de este artefacto<br>
+        5. Copia el Client ID y compártelo aquí — yo lo configuro en el código
+      </div>
+      <p style="font-size:12px;color:var(--faint)">Alternativamente, puedo actualizar el tracker directamente desde el chat cada vez que analice un CV — sin necesidad de esta app.</p>
+    `;
+  }
+};
+</script>
+
+<!-- Load Google APIs -->
+<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+
+</body>
+</html>
