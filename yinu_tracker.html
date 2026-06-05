@@ -327,6 +327,44 @@
     font-size: 14px;
   }
 
+  /* EDIT MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(26,26,24,0.5);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; padding: 1rem;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--white);
+    border-radius: 18px;
+    padding: 1.75rem;
+    width: 100%; max-width: 560px;
+    max-height: 90vh; overflow-y: auto;
+    transform: translateY(16px);
+    transition: transform 0.2s ease;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-title {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 800; font-size: 17px;
+    color: var(--ink); margin-bottom: 1.25rem;
+    display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  .modal-close {
+    background: none; border: none; cursor: pointer;
+    font-size: 20px; color: var(--faint); line-height: 1;
+    padding: 2px 6px; border-radius: 6px;
+  }
+  .modal-close:hover { background: var(--bg); color: var(--ink); }
+  .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.25rem; }
+  .btn-edit { background: var(--bg); color: var(--ink); border: 1px solid var(--border); }
+  .btn-edit:hover { background: var(--green-light); border-color: var(--green); }
+
   @media (max-width: 700px) {
     .stats-row { grid-template-columns: repeat(2, 1fr); }
     .form-grid, .form-grid-wide { grid-template-columns: 1fr; }
@@ -505,6 +543,63 @@
 
 </div>
 
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">
+      <span>Editar candidata</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <input type="hidden" id="e-row">
+    <div class="form-grid">
+      <div class="field">
+        <label>Etapa actual</label>
+        <select id="e-etapa">
+          <option value="Revisión CV">Revisión CV</option>
+          <option value="Pre-entrevista">Pre-entrevista</option>
+          <option value="Entrevista presencial">Entrevista presencial</option>
+          <option value="Comité">Comité</option>
+          <option value="Contratada">Contratada</option>
+          <option value="Descartada">Descartada</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Decisión</label>
+        <select id="e-decision">
+          <option value="Avanza">Avanza</option>
+          <option value="⭐ Prioritaria">⭐ Prioritaria</option>
+          <option value="Avanza con reservas">Avanza con reservas</option>
+          <option value="Pre-entrevista breve">Pre-entrevista breve</option>
+          <option value="Avanza — explorar fit">Avanza — explorar fit</option>
+          <option value="DESCARTADA">DESCARTADA</option>
+          <option value="Contratada">Contratada</option>
+          <option value="En revisión">En revisión</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Fecha</label>
+        <input type="text" id="e-fecha">
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:0.75rem">
+      <label>Señal clave</label>
+      <textarea id="e-senal"></textarea>
+    </div>
+    <div class="field" style="margin-bottom:0.75rem">
+      <label>Notas del proceso</label>
+      <textarea id="e-notas"></textarea>
+    </div>
+    <div class="field">
+      <label>Doc individual (URL)</label>
+      <input type="text" id="e-doc">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-green" onclick="saveEdit()" id="save-edit-btn">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -654,7 +749,7 @@ function renderTable(rows) {
 
   let html = '<table><thead><tr>';
   headers.forEach(h => html += `<th>${h}</th>`);
-  html += '</tr></thead><tbody>';
+  html += '<th style="width:60px"></th></tr></thead><tbody>';
 
   data.forEach((row, i) => {
     html += '<tr>';
@@ -669,8 +764,10 @@ function renderTable(rows) {
         html += `<td>${cell || '—'}</td>`;
       }
     });
-    // Pad missing cells
     for (let k = row.length; k < headers.length; k++) html += '<td>—</td>';
+    // Edit button — encode row data safely
+    const rowData = encodeURIComponent(JSON.stringify(row));
+    html += `<td><button class="btn btn-edit btn-sm" onclick="openEdit(${i + 2}, '${rowData}')">Editar</button></td>`;
     html += '</tr>';
   });
 
@@ -708,6 +805,63 @@ function updateStats(rows) {
   document.getElementById('stat-descartadas').textContent = descartadas;
   document.getElementById('stat-entrevista').textContent = entrevista;
 }
+
+// ─── EDIT MODAL ───────────────────────────────────────────────
+function openEdit(rowIndex, encodedData) {
+  const row = JSON.parse(decodeURIComponent(encodedData));
+  document.getElementById('e-row').value = rowIndex;
+  document.getElementById('e-etapa').value   = row[5] || '';
+  document.getElementById('e-decision').value = row[6] || '';
+  document.getElementById('e-senal').value   = row[7] || '';
+  document.getElementById('e-notas').value   = row[8] || '';
+  document.getElementById('e-doc').value     = row[9] || '';
+  document.getElementById('e-fecha').value   = row[10] || '';
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+}
+
+async function saveEdit() {
+  const btn = document.getElementById('save-edit-btn');
+  const rowIndex = parseInt(document.getElementById('e-row').value);
+
+  const updates = [
+    document.getElementById('e-etapa').value,
+    document.getElementById('e-decision').value,
+    document.getElementById('e-senal').value,
+    document.getElementById('e-notas').value,
+    document.getElementById('e-doc').value,
+    document.getElementById('e-fecha').value,
+  ];
+
+  btn.innerHTML = '<span class="spinner"></span> Guardando…';
+  btn.disabled = true;
+
+  try {
+    // Update columns F through K (índices 5-10) en la fila correcta
+    await gapi.client.sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: `F${rowIndex}:K${rowIndex}`,
+      valueInputOption: 'USER_ENTERED',
+      resource: { values: [updates] },
+    });
+    showToast('✓ Cambios guardados', 'success');
+    closeModal();
+    loadSheet();
+  } catch(e) {
+    showToast('Error al guardar: ' + (e.result?.error?.message || e.message), 'error');
+  } finally {
+    btn.innerHTML = 'Guardar cambios';
+    btn.disabled = false;
+  }
+}
+
+// Close modal clicking outside
+document.getElementById('edit-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
 
 // ─── ADD ROW ──────────────────────────────────────────────────
 async function addRow() {
